@@ -1,0 +1,7 @@
+build/
+leaderboard.db
+output/
+*.swp
+*.DS_Store
+._*
+.idea/
