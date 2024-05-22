@@ -15,10 +15,10 @@ output:
 	mkdir -p $(OUTPUT_DIR)/www
 	mkdir -p $(BUILD_DIR)
 
-libtetris:
+lib:
 	git submodule update --remote
 
-wasm: libtetris output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
+wasm: lib output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
 
 font:
 	cp $(SRC_DIR)/html_template/digital-7.mono.ttf $(OUTPUT_DIR)/www/
