@@ -16,7 +16,7 @@ output:
 	mkdir -p $(BUILD_DIR)
 
 lib:
-	git submodule update --remote
+	git submodule update --remote --init
 
 wasm: lib output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
 
