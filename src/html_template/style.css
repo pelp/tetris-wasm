@@ -8,6 +8,16 @@
     font-family: var(--info-font);
 }
 
+.game {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+}
+
 body {
     --info-font: 'Calculator', sans-serif;
     --cover-color: #999;
@@ -18,11 +28,9 @@ body {
     background: var(--background-color);
     background-size: cover;
     backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
 }
 
 .header {
@@ -85,7 +93,7 @@ body {
     width: fit-content;
 }
 
-.game {
+.game_wrapper {
     display: flex;
     gap: 5px;
     align-items: stretch;

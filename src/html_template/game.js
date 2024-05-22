@@ -30,6 +30,38 @@ Module.onRuntimeInitialized = () => {
         window.localStorage.setItem("name", name_input.value);
     };
 
+    const shake = (intensity, interval, length) => {
+        const game = document.querySelector(".game");
+        const randomVec = (mag) => {
+            const x = Math.random() - 0.5;
+            const y = Math.random() - 0.5;
+            const d = Math.hypot(x, y);
+            return [mag * x / d, mag * y / d];
+        }
+        const shakes = Array.from(Array(length).keys()).map(i => randomVec(1/(i + 1)));
+
+        const slowIter = (arr, time, fn) => {
+            const itr = arr.entries();
+            const loop = () => {
+                const n = itr.next().value
+                if (n === undefined) return;
+                fn(n);
+                setTimeout(loop, time);
+            };
+            loop();
+        };
+
+        const time = interval;
+        game.style.position = "absolute";
+        game.style.transition = `left ${time}ms ease-out, top ${time}ms ease-out`;
+        slowIter([...shakes, [0, 0]], time, (pos) => {
+            const x = pos[1][0];
+            const y = pos[1][1];
+            game.style.left = x * intensity + "px";
+            game.style.top = y * intensity + "px";
+        });
+    };
+        
     const updateLeaderboard = (scores) => {
         leaderboard.innerHTML = "";
         scores.forEach((person, _) => {
@@ -157,6 +189,8 @@ Module.onRuntimeInitialized = () => {
             if (rc !== -1) {
                 Module._js_set_fall_interval(1000 * (1000 - 10 * Module._js_lines()))
                 render();
+                    // Shake on TETRIS
+                    if (rc == 3) shake(4, 100, 2);
             }
         }
         window.requestAnimationFrame(tick)
