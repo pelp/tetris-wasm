@@ -18,7 +18,7 @@ output:
 libtetris:
 	git submodule update --remote
 
-wasm: output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
+wasm: libtetris output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
 
 font:
 	cp $(SRC_DIR)/html_template/digital-7.mono.ttf $(OUTPUT_DIR)/www/
