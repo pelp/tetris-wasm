@@ -1,4 +1,4 @@
-#include "libtetris/src/libtetris.h"
+#include <libtetris.h>
 #include <stdio.h>
 #include <time.h>
 #include <emscripten/emscripten.h>

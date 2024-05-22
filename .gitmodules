@@ -1,4 +1,4 @@
-[submodule "src/libtetris"]
-	path = src/libtetris
+[submodule "libtetris"]
+	path = libtetris
 	url = https://github.com/pelp/tetris
 	branch = draft/split
