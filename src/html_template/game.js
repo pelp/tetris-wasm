@@ -7,6 +7,7 @@ const GRID_HEIGHT = 20;
 
 Module.onRuntimeInitialized = () => {
     let playing = true;
+    let shouldUpdateGamepads = false;
 
     const keys = {
         down: false,
@@ -141,6 +142,10 @@ Module.onRuntimeInitialized = () => {
             prev = timeStamp
 
             if (playing) {
+                if (shouldUpdateGamepads) {
+                    updateGamepads();
+                }
+
                 const rc = handle(Module._js_tick(
                     keys.space,
                     keys.down,
@@ -198,6 +203,7 @@ Module.onRuntimeInitialized = () => {
 
     generate_html();
 
+    // Keyboard Input
     const handle_key = (event, down) => {
         if (down && !playing) return; // Guard against not playing
         switch (event.code) {
@@ -223,10 +229,58 @@ Module.onRuntimeInitialized = () => {
                 keys.down = down;
                 break;
             default:
-                console.log(event.code);
                 break;
         }
     }
     document.onkeydown = event => handle_key(event, true);
     document.onkeyup = event => handle_key(event, false);
+
+
+    // Gamepad Input
+    const haveGamepadEvents = "ongamepadconnected" in window;
+    const controllers = {};
+
+    const addGamepad = (gamepad) => {
+        shouldUpdateGamepads = true;
+        controllers[gamepad.index] = gamepad;
+    };
+    const removeGamepad = (gamepad) => {
+        delete controllers[gamepad.index];
+        shouldUpdateGamepads = Object.entries(controllers).length > 0;
+    };
+    const updateGamepads = () => {
+        if (!haveGamepadEvents) {
+            scanGamepads();
+        }
+
+        Object.entries(controllers)
+            .forEach(([i, controller]) => {
+                keys.rotate_ccw = playing && controller.buttons[0].pressed;
+                keys.rotate_cw = playing && controller.buttons[1].pressed;
+                keys.space = playing && controller.buttons[12].pressed;
+                keys.down = playing && controller.buttons[13].pressed;
+                keys.left = playing && controller.buttons[14].pressed;
+                keys.right = playing && controller.buttons[15].pressed;
+                keys.hold = playing && (controller.buttons[4].pressed || controller.buttons[5].pressed);
+            });
+    }
+
+    const scanGamepads = () => {
+        const gamepads = navigator.getGamepads();
+        for (const gamepad of gamepads) {
+            if (gamepad) {
+                if (gamepad.index in controllers) {
+                    controllers[gamepad.index] = gamepad;
+                } else {
+                    addGamepad(gamepad);
+                }
+            }
+        }
+    };
+
+    window.addEventListener("gamepadconnected", e => addGamepad(e.gamepad));
+    window.addEventListener("gamepaddisconnected", e => removeGamepad(e.gamepad));
+    if (!haveGamepadEvents) {
+        setInterval(scanGamepads, 500);
+    }
 };
