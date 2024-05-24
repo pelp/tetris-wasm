@@ -48,7 +48,7 @@ body {
         height: 30px;
     }
 
-    & > div {
+    &>div {
         font-family: var(--info-font);
         margin-top: 5px;
         border-style: inset;
@@ -60,18 +60,18 @@ body {
         display: flex;
         flex-direction: column;
 
-        & > span {
-            & > span:nth-child(1) {
+        &>span {
+            &>span:nth-child(1) {
                 float: left;
             }
 
-            & > span:nth-child(2) {
+            &>span:nth-child(2) {
                 float: right;
             }
         }
     }
 
-    & > .shape {
+    &>.shape {
         margin-top: 0;
         margin-bottom: 5px;
         flex-grow: 0;
@@ -90,7 +90,7 @@ body {
     gap: 5px;
     align-items: stretch;
 
-    & > div {
+    &>div {
         background: var(--cover-color);
         border-style: outset;
         border-color: var(--uncover-color);
@@ -113,7 +113,7 @@ body {
     justify-content: space-between;
     padding: 2px;
 
-    & > div {
+    &>div {
         border-style: outset;
         border-color: var(--uncover-color);
         border-width: 3px;
@@ -127,7 +127,7 @@ body {
     font-size: 40px;
     text-align: right;
 
-    & > div {
+    &>div {
         height: 40px;
         padding: 1px 2px 2px;
         border-style: inset;
@@ -241,17 +241,17 @@ body {
     justify-content: center !important;
     align-items: center !important;
 
-    & > div {
+    &>div {
         display: grid;
         grid-gap: 0;
         align-items: center;
         justify-items: center;
         width: fit-content;
 
-        & > div {
-            width: 15px;
-            height: 15px;
-            border-width: 3px;
+        &>div {
+            width: 25px;
+            height: 25px;
+            border-width: 4px;
         }
     }
 }

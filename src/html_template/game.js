@@ -18,8 +18,7 @@ Module.onRuntimeInitialized = () => {
         space: false
     };
 
-    const elements = [];
-    const shape_elements = [];
+    const cells = [];
 
     const restart_button = document.querySelector("#restart_button");
     const leaderboard = document.querySelector("#leaderboard");
@@ -80,26 +79,30 @@ Module.onRuntimeInitialized = () => {
             shape_height = Module._js_next_height(index);
         }
 
-        if (shape_ptr === 0) {
-            parent.replaceChildren();
-        } else if (old_w !== shape_width || old_h !== shape_height || old_shape !== shape_ptr) {
-            const wrapper = document.createElement("div");
-            wrapper.innerHTML = "";
-            wrapper.style.gridTemplateColumns = "auto ".repeat(shape_width);
-            shape_elements.length = 0;
-            for (let i = 0; i < shape_height; i++) {
-                const line = document.createElement("div");
-                for (let j = 0; j < shape_width; j++) {
-                    const e = document.createElement("div");
-                    e.classList.add("square");
-                    wrapper.appendChild(e);
-                    shape_elements.push(e);
+        if (old_w !== shape_width || old_h !== shape_height || old_shape !== shape_ptr) {
+            if (shape_ptr === 0) {
+                parent.replaceChildren();
+            } else {
+                const wrapper = document.createElement("div");
+                wrapper.innerHTML = "";
+                wrapper.style.gridTemplateColumns = "auto ".repeat(shape_width);
+                for (let i = 0; i < shape_height; i++) {
+                    let skip = true;
+                    for (let j = 0; j < shape_width; j++) {
+                        if (Module.HEAP8[i * shape_width + j + shape_ptr] !== 0) {
+                            skip = false;
+                            break;
+                        }
+                    }
+                    for (let j = 0; !skip && j < shape_width; j++) {
+                        const e = document.createElement("div");
+                        e.classList.add("square");
+                        e.dataset.tile = Module.HEAP8[i * shape_width + j + shape_ptr];
+                        wrapper.appendChild(e);
+                    }
                 }
+                parent.replaceChildren(wrapper);
             }
-            shape_elements.forEach((e, i) => {
-                e.dataset.tile = Module.HEAP8[i + shape_ptr];
-            });
-            parent.replaceChildren(wrapper);
             parent.dataset.oldW = shape_width;
             parent.dataset.oldH = shape_height;
             parent.dataset.oldShape = shape_ptr;
@@ -112,7 +115,7 @@ Module.onRuntimeInitialized = () => {
     const render = () => {
         const ptr = Module._js_get();
         lines_span.innerHTML = Module._js_lines().toString().padStart(3, '0');
-        elements.forEach((e, i) => {
+        cells.forEach((e, i) => {
             e.dataset.tile = Module.HEAP8[i + ptr];
         });
 
@@ -184,15 +187,14 @@ Module.onRuntimeInitialized = () => {
         const grid_wrapper = document.querySelector("#grid_wrapper");
         grid_wrapper.innerHTML = "";
         grid_wrapper.style.gridTemplateColumns = "auto ".repeat(GRID_WIDTH);
-        elements.length = 0;
+        cells.length = 0;
 
         for (let i = 0; i < GRID_HEIGHT; i++) {
-            const line = document.createElement("div");
             for (let j = 0; j < GRID_WIDTH; j++) {
                 const e = document.createElement("div");
                 e.classList.add("square");
                 grid_wrapper.appendChild(e);
-                elements.push(e);
+                cells.push(e);
             }
         }
     }
