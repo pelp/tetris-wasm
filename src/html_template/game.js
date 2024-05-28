@@ -37,7 +37,7 @@ Module.onRuntimeInitialized = () => {
             const d = Math.hypot(x, y);
             return [mag * x / d, mag * y / d];
         }
-        const shakes = Array.from(Array(length).keys()).map(i => randomVec(1/(i + 1)));
+        const shakes = Array.from(Array(length).keys()).map(i => randomVec(1 / (i + 1)));
 
         const slowIter = (arr, time, fn) => {
             const itr = arr.entries();
@@ -60,7 +60,7 @@ Module.onRuntimeInitialized = () => {
             game.style.top = y * intensity + "px";
         });
     };
-        
+
     const updateLeaderboard = (scores) => {
         leaderboard.innerHTML = "";
         scores.forEach((person, _) => {
@@ -175,6 +175,8 @@ Module.onRuntimeInitialized = () => {
         const diff = timeStamp - prev
         prev = timeStamp
 
+        console.log(`tick: ${diff}`);
+
         if (playing) {
             if (shouldUpdateGamepads) {
                 updateGamepads();
@@ -192,8 +194,8 @@ Module.onRuntimeInitialized = () => {
             if (rc !== -1) {
                 Module._js_set_fall_interval(1000 * (1000 - 10 * Module._js_lines()))
                 render();
-                    // Shake on TETRIS
-                    if (rc == 3) shake(4, 100, 2);
+                // Shake on TETRIS
+                if (rc == 3) shake(4, 100, 2);
             }
         }
         window.requestAnimationFrame(tick)
