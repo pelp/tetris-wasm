@@ -33,15 +33,6 @@ Module.onRuntimeInitialized = () => {
         const n_transactions = Module._js_get_num_transactions();
         const transaction_size = Module._js_get_transaction_size();
         const transaction_ptr = Module._js_get_transactions();
-        // TODO: REMOVE
-        // const n_inputs = 7;
-        // const transactions = Array.from(Array(n_transactions).keys()).map(i => {
-        //     const base_ptr = transaction_ptr + i * transaction_size;
-
-        //     const keys = Array.from(Module.HEAP8.slice(base_ptr, base_ptr + n_inputs));
-        //     const time = Module.HEAP32[(base_ptr + 8) / 4];
-        //     return {keys: keys, time: time};
-        // });
 
         const data = Module.HEAPU8.slice(transaction_ptr, transaction_ptr + n_transactions * transaction_size);
         const b64 = btoa(String.fromCharCode(...data));
