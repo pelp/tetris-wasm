@@ -1,6 +1,6 @@
 CC=gcc
 CC_FLAGS=-c -Werror -Wall -Wextra -fPIC
-EMCC_FLAGS=-Wall -Werror -Wextra -I libtetris/src
+EMCC_FLAGS=-Wall -Werror -Wextra -I libtetris/src -DRECORD_TRANSACTIONS
 EXE_NAME=tetris
 OUTPUT_DIR=output
 SRC_DIR=src

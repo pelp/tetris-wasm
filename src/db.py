@@ -4,13 +4,15 @@ import datetime
 import asyncio
 import json
 from websockets.server import serve
+import base64
+import libtetris
 
 DBNAME = "leaderboard"
 
 con = sqlite3.connect("leaderboard.db")
 cur = con.cursor()
 
-connections = {}
+connections = []
 
 res = cur.execute("SELECT name FROM sqlite_master")
 try:
@@ -41,26 +43,51 @@ def get_scores(difficulty):
         """.format(DBNAME=DBNAME, difficulty=difficulty)
     ).fetchmany(20)
 
+async def broadcast():
+    scores = get_scores("default")
+    for c in connections:
+        try:
+            await c.send(json.dumps(scores))
+        except:
+            connections.remove(c)
+
+def decode_transactions(transactions, length):
+    sz = len(transactions) // length
+    mv = memoryview(transactions).cast('B', shape=[length, sz])
+    lst = mv.tolist()
+    transactions = [libtetris.Transaction(params = libtetris.Params(
+        inputs = libtetris.Inputs(
+            rotate_cw = t[0],
+            rotate_ccw = t[1],
+            hold = t[2],
+            down = t[3],
+            left = t[4],
+            right = t[5],
+            space = t[6]
+        ),
+        delta_time = memoryview(bytearray(t[8:12])).cast('i').tolist()[0]
+    )) for t in lst]
+    return (libtetris.Transaction * length)(*transactions)
+
 async def handle(websocket):
-    connections[websocket] = ""
+    connections.append(websocket)
     async for message in websocket:
-        ns = json.loads(message)
-        if len(ns) > 1:
-            connections[websocket] = 'default'
-            post_score(ns[0][:10], ns[1])
-            scores = get_scores('default')
-            print(scores)
-            for c, d in list(connections.items()):
-                if d != 'default':
-                    continue
-                try:
-                    await c.send(json.dumps(scores))
-                except:
-                    del connections[c]
-        else:
-            connections[websocket] = ns[0]
-            await websocket.send(json.dumps(get_scores(ns[0])))
-    del connections[websocket]
+        info = json.loads(message)
+        if not isinstance(info, dict):
+            continue
+        if info["type"] == "submit":
+            transactions = info.get('transactions')
+            if transactions is None:
+                continue
+            game = libtetris.Tetris(seed=info["seed"])
+            decoded = base64.b64decode(transactions["b64"])
+            length = transactions["length"]
+            game.run_transactions(decode_transactions(decoded, length), length)
+            post_score(info["name"], game.score)
+            await broadcast()
+        elif info["type"] == "get":
+            await websocket.send(json.dumps(get_scores("default")))
+    connections.remove(websocket)
         
 
 async def main():
