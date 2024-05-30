@@ -29,6 +29,16 @@ Module.onRuntimeInitialized = () => {
         window.localStorage.setItem("name", name_input.value);
     };
 
+    const get_transactions = () => {
+        const n_transactions = Module._js_get_num_transactions();
+        const transaction_size = Module._js_get_transaction_size();
+        const transaction_ptr = Module._js_get_transactions();
+
+        const data = Module.HEAPU8.slice(transaction_ptr, transaction_ptr + n_transactions * transaction_size);
+        const b64 = btoa(String.fromCharCode(...data));
+        return [n_transactions, b64];
+    }
+
     const shake = (intensity, interval, length) => {
         const game = document.querySelector(".game");
         const randomVec = (mag) => {
@@ -84,12 +94,24 @@ Module.onRuntimeInitialized = () => {
         updateLeaderboard(JSON.parse(event.data));
     };
     socket.onopen = event => {
-        socket.send(JSON.stringify(['default']));
+        socket.send(JSON.stringify({type: 'get'}));
     };
     const postScore = () => {
         const lines = Module._js_lines();
         const name = name_input.value.toLowerCase();
-        socket.send(JSON.stringify([name, lines]));
+        const [length, transactions] = get_transactions();
+        const seed = Module._js_get_seed();
+        const payload = JSON.stringify({
+            type: "submit",
+            name: name,
+            lines: lines,
+            seed: seed,
+            transactions: {
+                length: length,
+                b64: transactions
+            }});
+        socket.send(payload);
+        // socket.send(JSON.stringify([name, lines]));
     };
 
     const lines_span = document.querySelector("#lines_span");
@@ -190,10 +212,10 @@ Module.onRuntimeInitialized = () => {
                 keys.hold,
                 diff * 1000));
             if (rc !== -1) {
-                Module._js_set_fall_interval(1000 * (1000 - 10 * Module._js_lines()))
+                // Module._js_set_fall_interval(1000 * (1000 - 10 * Module._js_lines()))
                 render();
-                    // Shake on TETRIS
-                    if (rc == 3) shake(4, 100, 2);
+                // Shake on TETRIS
+                if (rc == 3) shake(4, 100, 2);
             }
         }
         window.requestAnimationFrame(tick)
@@ -201,17 +223,22 @@ Module.onRuntimeInitialized = () => {
     window.requestAnimationFrame(tick)
 
     // Restart button
-    const restart = () => {
+    const start = () => {
         playing = true;
         Module._js_init(
             GRID_WIDTH,
             GRID_HEIGHT,
-            Math.floor(1000000),
+            1000000,
             166667,
             33000);
         render();
     };
-    restart();
+    const restart = () => {
+        playing = true;
+        Module._js_restart();
+        render();
+    }
+    start();
     restart_button.onclick = event => {
         restart();
     };
