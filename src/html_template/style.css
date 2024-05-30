@@ -56,7 +56,7 @@ body {
         height: 30px;
     }
 
-    &>div {
+    & > div {
         font-family: var(--info-font);
         margin-top: 5px;
         border-style: inset;
@@ -68,18 +68,18 @@ body {
         display: flex;
         flex-direction: column;
 
-        &>span {
-            &>span:nth-child(1) {
+        & > span {
+            & > span:nth-child(1) {
                 float: left;
             }
 
-            &>span:nth-child(2) {
+            & > span:nth-child(2) {
                 float: right;
             }
         }
     }
 
-    &>.shape {
+    & > .shape {
         margin-top: 0;
         margin-bottom: 5px;
         flex-grow: 0;
@@ -98,7 +98,7 @@ body {
     gap: 5px;
     align-items: stretch;
 
-    &>div {
+    & > div {
         background: var(--cover-color);
         border-style: outset;
         border-color: var(--uncover-color);
@@ -121,7 +121,7 @@ body {
     justify-content: space-between;
     padding: 2px;
 
-    &>div {
+    & > div {
         border-style: outset;
         border-color: var(--uncover-color);
         border-width: 3px;
@@ -135,7 +135,7 @@ body {
     font-size: 40px;
     text-align: right;
 
-    &>div {
+    & > div {
         height: 40px;
         padding: 1px 2px 2px;
         border-style: inset;
@@ -183,35 +183,42 @@ body {
     border-width: 5px;
     border-style: none;
 
-    &[data-tile="1"] {
-        border-style: outset;
-        background-color: yellow;
-        border-color: yellow;
-    }
-
-    &[data-tile="2"] {
-        border-style: outset;
+    &[data-tile="0"] {
+    border-style: outset;
         background-color: cyan;
         border-color: cyan;
     }
 
+    &[data-tile="1"] {
+    border-style: outset;
+        background-color: orange;
+        border-color: orange;
+    }
+
+    &[data-tile="2"] {
+    border-style: outset;
+        background-color: yellow;
+        border-color: yellow;
+    }
+
     &[data-tile="3"] {
+        border-style: outset;
+        background-color: red;
+        border-color: red;
+    }
+
+    &[data-tile="4"] {
+        border-style: outset;
+        background-color: magenta;
+        border-color: magenta;
+    }
+
+    &[data-tile="5"] {
         border-style: outset;
         background-color: blue;
         border-color: blue;
     }
 
-    &[data-tile="4"] {
-        border-style: outset;
-        background-color: orange;
-        border-color: orange;
-    }
-
-    &[data-tile="5"] {
-        border-style: outset;
-        background-color: red;
-        border-color: red;
-    }
 
     &[data-tile="6"] {
         border-style: outset;
@@ -219,13 +226,7 @@ body {
         border-color: lime;
     }
 
-    &[data-tile="7"] {
-        border-style: outset;
-        background-color: magenta;
-        border-color: magenta;
-    }
-
-    &[data-tile="10"] {
+    &[data-tile="8"] {
         background-color: black;
         border-color: gray;
         border-style: dashed;
@@ -233,7 +234,7 @@ body {
     }
 }
 
-.grid_wrapper .square[data-tile="0"] {
+.grid_wrapper .square[data-tile="-1"] {
     border-style: solid;
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.1);
@@ -249,14 +250,14 @@ body {
     justify-content: center !important;
     align-items: center !important;
 
-    &>div {
+    & > div {
         display: grid;
         grid-gap: 0;
         align-items: center;
         justify-items: center;
         width: fit-content;
 
-        &>div {
+        & > div {
             width: 25px;
             height: 25px;
             border-width: 4px;

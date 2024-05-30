@@ -102,11 +102,11 @@ Module.onRuntimeInitialized = () => {
         let shape_width;
         let shape_height;
         if (index === -1) {
-            shape_ptr = Module._js_hold();
+            shape_ptr = Module._js_hold_blocks();
             shape_width = Module._js_hold_width();
             shape_height = Module._js_hold_height();
         } else {
-            shape_ptr = Module._js_next(index);
+            shape_ptr = Module._js_next_blocks(index);
             shape_width = Module._js_next_width(index);
             shape_height = Module._js_next_height(index);
         }
@@ -116,17 +116,9 @@ Module.onRuntimeInitialized = () => {
                 parent.replaceChildren();
             } else {
                 const wrapper = document.createElement("div");
-                wrapper.innerHTML = "";
                 wrapper.style.gridTemplateColumns = "auto ".repeat(shape_width);
                 for (let i = 0; i < shape_height; i++) {
-                    let skip = true;
                     for (let j = 0; j < shape_width; j++) {
-                        if (Module.HEAP8[i * shape_width + j + shape_ptr] !== 0) {
-                            skip = false;
-                            break;
-                        }
-                    }
-                    for (let j = 0; !skip && j < shape_width; j++) {
                         const e = document.createElement("div");
                         e.classList.add("square");
                         e.dataset.tile = Module.HEAP8[i * shape_width + j + shape_ptr];
@@ -172,10 +164,8 @@ Module.onRuntimeInitialized = () => {
 
     let prev;
     const tick = (timeStamp) => {
-        const diff = timeStamp - prev
-        prev = timeStamp
-
-        console.log(`tick: ${diff}`);
+        const diff = timeStamp - prev;
+        prev = timeStamp;
 
         if (playing) {
             if (shouldUpdateGamepads) {
@@ -192,15 +182,15 @@ Module.onRuntimeInitialized = () => {
                 keys.hold,
                 diff * 1000));
             if (rc !== -1) {
-                Module._js_set_fall_interval(1000 * (1000 - 10 * Module._js_lines()))
+                Module._js_set_fall_interval(1000 * (1000 - 10 * Module._js_lines()));
                 render();
                 // Shake on TETRIS
-                if (rc == 3) shake(4, 100, 2);
+                if (rc === 3) shake(4, 100, 2);
             }
         }
-        window.requestAnimationFrame(tick)
-    }
-    window.requestAnimationFrame(tick)
+        window.requestAnimationFrame(tick);
+    };
+    window.requestAnimationFrame(tick);
 
     // Restart button
     const restart = () => {
@@ -208,7 +198,7 @@ Module.onRuntimeInitialized = () => {
         Module._js_init(
             GRID_WIDTH,
             GRID_HEIGHT,
-            Math.floor(1000000),
+            1000000,
             166667,
             33000);
         render();
@@ -269,7 +259,7 @@ Module.onRuntimeInitialized = () => {
     window.addEventListener("keydown", e => handle_key(e, true));
     window.addEventListener("keyup", e => handle_key(e, false));
     window.addEventListener("keypress", e => {
-        if (e.code == "KeyR") {
+        if (e.code === "KeyR") {
             restart();
         }
     });

@@ -6,7 +6,7 @@ OUTPUT_DIR=output
 SRC_DIR=src
 BUILD_DIR=build
 EMSDK_REPO=https://github.com/emscripten-core/emsdk.git
-SOURCE_FILES=$(SRC_DIR)/wasm.c libtetris/src/libtetris.c libtetris/src/bag.c libtetris/src/piece.c
+SOURCE_FILES=$(SRC_DIR)/wasm.c libtetris/src/libtetris.c libtetris/src/bag.c libtetris/src/piece.c libtetris/src/framebuffer.c
 
 SHELL:=/usr/bin/env bash
 
@@ -16,10 +16,7 @@ output:
 	mkdir -p $(OUTPUT_DIR)/www
 	mkdir -p $(BUILD_DIR)
 
-lib:
-	git submodule update --remote --init
-
-wasm: lib output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
+wasm: output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
 
 font:
 	cp $(SRC_DIR)/html_template/digital-7.mono.ttf $(OUTPUT_DIR)/www/
