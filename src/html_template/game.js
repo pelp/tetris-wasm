@@ -29,13 +29,23 @@ Module.onRuntimeInitialized = () => {
         window.localStorage.setItem("name", name_input.value);
     };
 
+    function uint8ToBase64( buffer ) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa( binary );
+    }
+
     const get_transactions = () => {
         const n_transactions = Module._js_get_num_transactions();
         const transaction_size = Module._js_get_transaction_size();
         const transaction_ptr = Module._js_get_transactions();
 
         const data = Module.HEAPU8.slice(transaction_ptr, transaction_ptr + n_transactions * transaction_size);
-        const b64 = btoa(String.fromCharCode(...data));
+        const b64 = uint8ToBase64(data);
         return [n_transactions, b64];
     }
 
