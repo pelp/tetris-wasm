@@ -89,9 +89,5 @@ class Tetris:
     def score(self):
         return lib.get_lines(self.handle)
 
-    @property
-    def fall_time(self):
-        return lib.get_fall_time(self.handle)
-
     def run_transactions(self, transactions, length):
         lib.run_transactions(self.handle, transactions, length)
