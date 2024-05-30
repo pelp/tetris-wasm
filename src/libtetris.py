@@ -59,7 +59,6 @@ lib.init.argtypes = (ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int, 
 lib.tick.argtypes = (ctypes.c_void_p, Params)
 lib.destroy_game.argtypes = (ctypes.c_void_p,)
 lib.get_lines.argtypes = (ctypes.c_void_p,)
-lib.get_fall_time.argtypes = (ctypes.c_void_p,)
 lib.read_game.argtypes = (ctypes.c_void_p, ctypes.c_int, ctypes.c_int)
 lib.set_seed.argtypes = (ctypes.c_void_p, ctypes.c_int)
 lib.run_transactions.argtypes = (ctypes.c_void_p, ctypes.POINTER(Transaction), ctypes.c_int)
