@@ -6,6 +6,7 @@ OUTPUT_DIR=output
 SRC_DIR=src
 BUILD_DIR=build
 EMSDK_REPO=https://github.com/emscripten-core/emsdk.git
+SOURCE_FILES=$(SRC_DIR)/wasm.c libtetris/src/libtetris.c libtetris/src/bag.c libtetris/src/piece.c libtetris/src/framebuffer.c
 
 SHELL:=/usr/bin/env bash
 
@@ -15,10 +16,7 @@ output:
 	mkdir -p $(OUTPUT_DIR)/www
 	mkdir -p $(BUILD_DIR)
 
-lib:
-	git submodule update --remote --init
-
-wasm: lib output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
+wasm: output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
 
 font:
 	cp $(SRC_DIR)/html_template/digital-7.mono.ttf $(OUTPUT_DIR)/www/
@@ -30,7 +28,7 @@ $(OUTPUT_DIR)/www/game.js: $(SRC_DIR)/html_template/game.js
 $(OUTPUT_DIR)/www/background.jpg: $(SRC_DIR)/html_template/background.jpg
 	cp $(SRC_DIR)/html_template/background.jpg $(OUTPUT_DIR)/www/background.jpg
 $(OUTPUT_DIR)/www/index.html: libtetris emsdk $(SRC_DIR)/html_template/template.html
-	source $(BUILD_DIR)/emsdk/emsdk_env.sh && emcc $(EMCC_FLAGS) libtetris/src/libtetris.c $(SRC_DIR)/wasm.c -o $(OUTPUT_DIR)/www/index.html --shell-file $(SRC_DIR)/html_template/template.html -s NO_EXIT_RUNTIME=1 -s "EXPORTED_RUNTIME_METHODS=['ccall']"
+	source $(BUILD_DIR)/emsdk/emsdk_env.sh && emcc $(EMCC_FLAGS) $(SOURCE_FILES) -o $(OUTPUT_DIR)/www/index.html --shell-file $(SRC_DIR)/html_template/template.html -s NO_EXIT_RUNTIME=1 -s "EXPORTED_RUNTIME_METHODS=['ccall']"
 
 emsdk:
 ifeq ("$(wildcard $(BUILD_DIR)/emsdk)","")
