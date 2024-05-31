@@ -35,7 +35,7 @@ class Inputs(ctypes.Structure):
 
 class Params(ctypes.Structure):
     _fields_ = [('inputs', Inputs),
-                ('delta_time', ctypes.c_int)]
+                ('delta_time', ctypes.c_int64)]
 
     @classmethod
     def from_transaction(cls, t: dict):
@@ -60,6 +60,7 @@ lib.tick.argtypes = (ctypes.c_void_p, Params)
 lib.destroy_game.argtypes = (ctypes.c_void_p,)
 lib.get_lines.argtypes = (ctypes.c_void_p,)
 lib.read_game.argtypes = (ctypes.c_void_p, ctypes.c_int, ctypes.c_int)
+lib.read_game.restype = ctypes.c_int8
 lib.set_seed.argtypes = (ctypes.c_void_p, ctypes.c_int)
 lib.run_transactions.argtypes = (ctypes.c_void_p, ctypes.POINTER(Transaction), ctypes.c_int)
 
@@ -80,7 +81,8 @@ class Tetris:
         for y in range(20):
             print("|", end="")
             for x in range(10):
-                print(lut[lib.read_game(self.handle, x, y) + 1], end="")
+                tile = lib.read_game(self.handle, x, y)
+                print(lut[tile + 1], end="")
             print("|")
         print("-" * 12)
     

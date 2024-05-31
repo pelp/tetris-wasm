@@ -1,6 +1,5 @@
 #include <libtetris.h>
-#include <stdio.h>
-#include <time.h>
+#include <string.h>
 #include <emscripten/emscripten.h>
 
 EMSCRIPTEN_KEEPALIVE tetris_t game;
@@ -15,6 +14,7 @@ EMSCRIPTEN_KEEPALIVE void js_init(
         int automatic_repeat_rate
 ) {
     g_fall_interval = fall_interval;
+    game.seed = 0;
     init(&game, width, height, fall_interval, delayed_auto_shift, automatic_repeat_rate);
 }
 

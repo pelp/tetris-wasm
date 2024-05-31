@@ -27,6 +27,7 @@ def post_score(name, time):
         f"INSERT INTO {DBNAME} VALUES ('{name}', {time}, 'default', '{datetime.datetime.now()}')")
     con.commit()
 
+
 def get_scores(difficulty):
     return cur.execute(
         """
@@ -43,6 +44,7 @@ def get_scores(difficulty):
         """.format(DBNAME=DBNAME, difficulty=difficulty)
     ).fetchmany(20)
 
+
 async def broadcast():
     scores = get_scores("default")
     for c in connections:
@@ -51,23 +53,26 @@ async def broadcast():
         except:
             connections.remove(c)
 
+
 def decode_transactions(transactions, length):
     sz = len(transactions) // length
     mv = memoryview(transactions).cast('B', shape=[length, sz])
     lst = mv.tolist()
-    transactions = [libtetris.Transaction(params = libtetris.Params(
-        inputs = libtetris.Inputs(
-            rotate_cw = t[0],
-            rotate_ccw = t[1],
-            hold = t[2],
-            down = t[3],
-            left = t[4],
-            right = t[5],
-            space = t[6]
+    transactions = [libtetris.Transaction(params=libtetris.Params(
+        inputs=libtetris.Inputs(
+            rotate_cw=t[0],
+            rotate_ccw=t[1],
+            hold=t[2],
+            down=t[3],
+            left=t[4],
+            right=t[5],
+            space=t[6]
         ),
-        delta_time = memoryview(bytearray(t[8:12])).cast('i').tolist()[0]
+        delta_time=memoryview(bytearray(t[8:16])).cast('i').tolist()[0]
     )) for t in lst]
+
     return (libtetris.Transaction * length)(*transactions)
+
 
 async def handle(websocket):
     connections.append(websocket)
@@ -89,11 +94,12 @@ async def handle(websocket):
         elif info["type"] == "get":
             await websocket.send(json.dumps(get_scores("default")))
     connections.remove(websocket)
-        
+
 
 async def main():
     async with serve(handle, "localhost", 8763):
         await asyncio.Future()
+
 
 asyncio.run(main())
 

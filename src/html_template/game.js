@@ -31,12 +31,12 @@ Module.onRuntimeInitialized = () => {
 
     function uint8ToBase64(buffer) {
         let binary = '';
-        const bytes = new Uint8Array(buffer);
+        const bytes= new Uint8Array(buffer);
         const len = bytes.byteLength;
         for (let i = 0; i < len; i++) {
             binary += String.fromCharCode(bytes[i]);
         }
-        return window.btoa(binary);
+        return btoa(binary);
     }
 
     const get_transactions = () => {
