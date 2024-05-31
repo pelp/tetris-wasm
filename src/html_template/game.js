@@ -29,14 +29,14 @@ Module.onRuntimeInitialized = () => {
         window.localStorage.setItem("name", name_input.value);
     };
 
-    function uint8ToBase64( buffer ) {
+    function uint8ToBase64(buffer) {
         let binary = '';
         const bytes = new Uint8Array(buffer);
         const len = bytes.byteLength;
         for (let i = 0; i < len; i++) {
             binary += String.fromCharCode(bytes[i]);
         }
-        return window.btoa( binary );
+        return window.btoa(binary);
     }
 
     const get_transactions = () => {
@@ -119,7 +119,8 @@ Module.onRuntimeInitialized = () => {
             transactions: {
                 length: length,
                 b64: transactions
-            }});
+            }
+        });
         socket.send(payload);
         // socket.send(JSON.stringify([name, lines]));
     };

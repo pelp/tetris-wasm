@@ -20,7 +20,7 @@ EMSCRIPTEN_KEEPALIVE void js_init(
 
 EMSCRIPTEN_KEEPALIVE void js_restart() {
     game.seed = 0;
-    init(&game, game.width, game.height, g_fall_interval, game.delayed_auto_shift, game.automatic_repeat_rate);
+    init(&game, game.framebuffer.width, game.framebuffer.height, g_fall_interval, game.delayed_auto_shift, game.automatic_repeat_rate);
 }
 
 EMSCRIPTEN_KEEPALIVE int js_lines() {
@@ -57,7 +57,7 @@ EMSCRIPTEN_KEEPALIVE int js_next_height(int index) {
     return 0;
 }
 
-EMSCRIPTEN_KEEPALIVE const piece_id_t* js_next_blocks(int index) {
+EMSCRIPTEN_KEEPALIVE const int8_t* js_next_blocks(int index) {
     if (index >= 0 && index < NUM_NEXT_PIECES) {
         return get_piece_blocks(game.bag.next[index]);
     }
@@ -72,7 +72,7 @@ EMSCRIPTEN_KEEPALIVE int js_hold_height() {
     return game.hold != PIECE_EMPTY ? get_piece_height(game.hold) : 0;
 }
 
-EMSCRIPTEN_KEEPALIVE const piece_id_t* js_hold_blocks() {
+EMSCRIPTEN_KEEPALIVE const int8_t* js_hold_blocks() {
     return game.hold != PIECE_EMPTY ? get_piece_blocks(game.hold) : NULL;
 }
 

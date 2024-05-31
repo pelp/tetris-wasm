@@ -76,11 +76,11 @@ class Tetris:
         lib.destroy_game(self.handle)
     
     def print(self):
-        lut = [" ", "A", "B", "C", "D", "E", "F", "G", " ", " ", "_"]
+        lut = [" ", "I", "L", "O", "Z", "T", "J", "S", " ", "_"]
         for y in range(20):
             print("|", end="")
             for x in range(10):
-                print(lut[lib.read_game(self.handle, x, y)], end="")
+                print(lut[lib.read_game(self.handle, x, y) + 1], end="")
             print("|")
         print("-" * 12)
     
