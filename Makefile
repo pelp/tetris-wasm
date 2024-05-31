@@ -1,6 +1,6 @@
 CC=gcc
 CC_FLAGS=-c -Werror -Wall -Wextra -fPIC
-EMCC_FLAGS=-Wall -Werror -Wextra -I libtetris/src
+EMCC_FLAGS=-Wall -Werror -Wextra -I libtetris/src -DRECORD_TRANSACTIONS
 EXE_NAME=tetris
 OUTPUT_DIR=output
 SRC_DIR=src
@@ -16,7 +16,13 @@ output:
 	mkdir -p $(OUTPUT_DIR)/www
 	mkdir -p $(BUILD_DIR)
 
-wasm: output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
+submodule:
+	git submodule update --remote --init
+
+lib: submodule
+	cd libtetris; make lib; cd ..
+
+wasm: submodule output font $(OUTPUT_DIR)/www/index.html $(OUTPUT_DIR)/www/style.css $(OUTPUT_DIR)/www/game.js $(OUTPUT_DIR)/www/background.jpg venv
 
 font:
 	cp $(SRC_DIR)/html_template/digital-7.mono.ttf $(OUTPUT_DIR)/www/
@@ -53,7 +59,7 @@ endif
 	source $(BUILD_DIR)/.venv/bin/activate && pip install websockets
 	@echo "To run the websocket server run \`make start\`"
 
-start:
+start: lib
 	source $(BUILD_DIR)/.venv/bin/activate && python3 src/db.py
 
 update:
