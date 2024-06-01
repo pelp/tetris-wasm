@@ -10,12 +10,22 @@ Module.onRuntimeInitialized = () => {
     let shouldUpdateGamepads = false;
 
     const keys = {
-        down: false,
         left: false,
         right: false,
         rotate_cw: false,
         rotate_ccw: false,
-        space: false
+        softDrop: false,
+        hardDrop: false,
+        hold: false,
+    };
+    const gamepadButtons = {
+        left: false,
+        right: false,
+        rotate_cw: false,
+        rotate_ccw: false,
+        softDrop: false,
+        hardDrop: false,
+        hold: false,
     };
 
     const cells = [];
@@ -31,7 +41,7 @@ Module.onRuntimeInitialized = () => {
 
     function uint8ToBase64(buffer) {
         let binary = '';
-        const bytes= new Uint8Array(buffer);
+        const bytes = new Uint8Array(buffer);
         const len = bytes.byteLength;
         for (let i = 0; i < len; i++) {
             binary += String.fromCharCode(bytes[i]);
@@ -206,14 +216,15 @@ Module.onRuntimeInitialized = () => {
             }
 
             const rc = handle(Module._js_tick(
-                keys.space,
-                keys.down,
-                keys.left,
-                keys.right,
-                keys.rotate_cw,
-                keys.rotate_ccw,
-                keys.hold,
+                gamepadButtons.hardDrop || keys.hardDrop,
+                gamepadButtons.softDrop || keys.softDrop,
+                gamepadButtons.left || keys.left,
+                gamepadButtons.right || keys.right,
+                gamepadButtons.rotate_cw || keys.rotate_cw,
+                gamepadButtons.rotate_ccw || keys.rotate_ccw,
+                gamepadButtons.hold || keys.hold,
                 diff * 1000));
+
             if (rc !== -1) {
                 // Module._js_set_fall_interval(1000 * (1000 - 10 * Module._js_lines()));
                 render();
@@ -270,7 +281,7 @@ Module.onRuntimeInitialized = () => {
         if (down && !playing) return; // Guard against not playing
         switch (event.code) {
             case "Space":
-                keys.space = down;
+                keys.hardDrop = down;
                 break;
             case "ArrowLeft":
                 keys.left = down;
@@ -288,7 +299,7 @@ Module.onRuntimeInitialized = () => {
                 keys.right = down;
                 break;
             case "ArrowDown":
-                keys.down = down;
+                keys.softDrop = down;
                 break;
             default:
                 break;
@@ -322,13 +333,13 @@ Module.onRuntimeInitialized = () => {
 
         Object.entries(controllers)
             .forEach(([i, controller]) => {
-                keys.rotate_ccw = playing && controller.buttons[0].pressed;
-                keys.rotate_cw = playing && controller.buttons[1].pressed;
-                keys.space = playing && controller.buttons[12].pressed;
-                keys.down = playing && controller.buttons[13].pressed;
-                keys.left = playing && controller.buttons[14].pressed;
-                keys.right = playing && controller.buttons[15].pressed;
-                keys.hold = playing && (controller.buttons[4].pressed || controller.buttons[5].pressed);
+                gamepadButtons.rotate_ccw = playing && controller.buttons[0].pressed;
+                gamepadButtons.rotate_cw = playing && controller.buttons[1].pressed;
+                gamepadButtons.hardDrop = playing && controller.buttons[12].pressed;
+                gamepadButtons.softDrop = playing && controller.buttons[13].pressed;
+                gamepadButtons.left = playing && controller.buttons[14].pressed;
+                gamepadButtons.right = playing && controller.buttons[15].pressed;
+                gamepadButtons.hold = playing && (controller.buttons[4].pressed || controller.buttons[5].pressed);
             });
     }
 

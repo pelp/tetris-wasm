@@ -81,8 +81,8 @@ EMSCRIPTEN_KEEPALIVE void js_set_fall_interval(int fall_interval) {
 }
 
 EMSCRIPTEN_KEEPALIVE int js_tick(
-        bool space,
-        bool down,
+        bool hard_drop,
+        bool soft_drop,
         bool left,
         bool right,
         bool rotate_cw,
@@ -92,8 +92,8 @@ EMSCRIPTEN_KEEPALIVE int js_tick(
 ) {
     return tick(&game, (tetris_params_t) {
             .inputs = (tetris_inputs_t) {
-                    .space = space,
-                    .down = down,
+                    .hard_drop = hard_drop,
+                    .soft_drop = soft_drop,
                     .left = left,
                     .right = right,
                     .rotate_ccw = rotate_ccw,
