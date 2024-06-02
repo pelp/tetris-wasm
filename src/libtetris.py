@@ -2,6 +2,7 @@ import ctypes
 
 lib = ctypes.CDLL("libtetris/output/lib/libtetris.so")
 
+
 class Inputs(ctypes.Structure):
     _fields_ = [('rotate_cw', ctypes.c_bool),
                 ('rotate_ccw', ctypes.c_bool),
@@ -10,28 +11,31 @@ class Inputs(ctypes.Structure):
                 ('left', ctypes.c_bool),
                 ('right', ctypes.c_bool),
                 ('space', ctypes.c_bool)]
+
     @classmethod
     def from_keys(cls, k: dict):
         return cls(
-            rotate_cw = k[0],
-            rotate_ccw = k[1],
-            hold = k[2],
-            down = k[3],
-            left = k[4],
-            right = k[5],
-            space = k[6]
+            rotate_cw=k[0],
+            rotate_ccw=k[1],
+            hold=k[2],
+            down=k[3],
+            left=k[4],
+            right=k[5],
+            space=k[6]
         )
+
     @classmethod
     def empty(cls):
         return cls(
-            rotate_cw = 0,
-            rotate_ccw = 0,
-            hold = 0,
-            down = 0,
-            left = 0,
-            right = 0,
-            space = 0
+            rotate_cw=0,
+            rotate_ccw=0,
+            hold=0,
+            down=0,
+            left=0,
+            right=0,
+            space=0
         )
+
 
 class Params(ctypes.Structure):
     _fields_ = [('inputs', Inputs),
@@ -40,19 +44,21 @@ class Params(ctypes.Structure):
     @classmethod
     def from_transaction(cls, t: dict):
         return cls(
-            delta_time = t['time'],
-            inputs = Inputs.from_keys(t['keys'])
-        ) 
-    
+            delta_time=t['time'],
+            inputs=Inputs.from_keys(t['keys'])
+        )
+
     @classmethod
     def empty(cls):
         return cls(
-            delta_time = 0,
-            inputs = Inputs.empty()
+            delta_time=0,
+            inputs=Inputs.empty()
         )
+
 
 class Transaction(ctypes.Structure):
     _fields_ = [('params', Params)]
+
 
 lib.create_game.restype = ctypes.c_void_p
 lib.init.argtypes = (ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int)
@@ -64,6 +70,7 @@ lib.read_game.restype = ctypes.c_int8
 lib.set_seed.argtypes = (ctypes.c_void_p, ctypes.c_int)
 lib.run_transactions.argtypes = (ctypes.c_void_p, ctypes.POINTER(Transaction), ctypes.c_int)
 
+
 class Tetris:
     def __init__(self, seed=0):
         self.handle = lib.create_game()
@@ -72,20 +79,21 @@ class Tetris:
 
     def tick(self, params: Params):
         return lib.tick(self.handle, params)
-    
+
     def __del__(self):
         lib.destroy_game(self.handle)
-    
+
     def print(self):
         lut = [" ", "I", "L", "O", "Z", "T", "J", "S", " ", "_"]
+        color_lut = ["30", "96", "33", "93", "91", "95", "94", "92", "30", "90"]
         for y in range(20):
             print("|", end="")
             for x in range(10):
-                tile = lib.read_game(self.handle, x, y)
-                print(lut[tile + 1], end="")
+                tile = lib.read_game(self.handle, x, y) + 1
+                print(f"\x1b[1;{color_lut[tile]}m{lut[tile]}\x1b[0m", end="")
             print("|")
         print("-" * 12)
-    
+
     @property
     def score(self):
         return lib.get_lines(self.handle)

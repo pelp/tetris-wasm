@@ -89,6 +89,7 @@ async def handle(websocket):
             length = transactions["length"]
             game.run_transactions(decode_transactions(decoded, length), length)
             game.print()
+            print(f"score: {game.score}")
             post_score(info["name"], game.score)
             await broadcast()
         elif info["type"] == "get":
